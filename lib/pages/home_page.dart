@@ -237,8 +237,6 @@ class _HomePageState extends State<HomePage> {
           // ignore: avoid_print
           print("exchange");
           // ignore: avoid_print
-
-          print(words[1].quote);
           //print('$word')
           //print(qoutes)
         },
