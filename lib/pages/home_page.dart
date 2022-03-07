@@ -5,12 +5,15 @@ import 'dart:math';
 
 import 'package:appenglish/packages/qoute_model.dart';
 import 'package:appenglish/packages/quote.dart';
+import 'package:appenglish/pages/control_page.dart';
 import 'package:appenglish/value/app_assets.dart';
 import 'package:appenglish/value/app_colors.dart';
 import 'package:appenglish/value/app_styles.dart';
+import 'package:appenglish/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:appenglish/models/englishtoday.dart';
 import 'package:english_words/english_words.dart';
+//import 'package:appenglish/widgets/app_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -65,6 +68,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     _pageController = PageController(
@@ -78,6 +83,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: AppColors.secondColor,
       appBar: AppBar(
         elevation: 0,
@@ -88,10 +94,13 @@ class _HomePageState extends State<HomePage> {
         ),
         leading: InkWell(
           //???
-          onTap: () {},
+          onTap: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
           child: Image.asset(AppAssets.menu),
         ),
       ),
+      // ignore: avoid_unnecessary_containers
       body: Container(
         //color: Colors.red,
         //padding: EdgeInsets.symmetric(horizontal: 20),
@@ -106,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                   .copyWith(fontSize: 12, color: AppColors.textColor),
             ),
           ),
+          // ignore: sized_box_for_whitespace
           Container(
             height: size.height * 2 / 3,
             //color: Colors.black,
@@ -122,9 +132,9 @@ class _HomePageState extends State<HomePage> {
               itemCount: words.length,
               itemBuilder: (BuildContext context, int index) {
                 String fristLetter =
-                    words[index].noun != null ? words[index].noun! : " " ;
+                    words[index].noun != null ? words[index].noun! : " ";
                 //if words.. khac1 null thi lay words[index].noun! : '';
-                
+
                 fristLetter = fristLetter.substring(0, 1);
 
                 String leftLetter =
@@ -161,6 +171,7 @@ class _HomePageState extends State<HomePage> {
                             padding: EdgeInsets.all(10),
                             alignment: Alignment.centerRight,
                             child: Image.asset(AppAssets.heart)),
+                        // ignore: avoid_unnecessary_containers
                         Container(
                           //alignment: Alignment.centerLeft,
                           child: RichText(
@@ -233,14 +244,43 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primaryColor,
-        onPressed: () {
-          // ignore: avoid_print
-          print("exchange");
-          // ignore: avoid_print
-          //print('$word')
-          //print(qoutes)
-        },
+        onPressed: () {},
         child: Image.asset(AppAssets.exchange),
+      ),
+      drawer: Drawer(
+        child: Container(
+          color: AppColors.lighBlue,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 24, left: 16),
+                child: Text('Your mind',
+                    style: AppStyles.h3.copyWith(color: AppColors.textColor)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
+                child: AppButton(
+                    label: 'Favorites',
+                    onTap: () {
+                      // ignore: avoid_print
+                      print('Favori');
+                    }),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
+                child: AppButton(
+                    label: 'Your Control',
+                    onTap: () {
+                      // ignore: avoid_print
+                      print('Favori');
+                      Navigator.push(context, 
+                      MaterialPageRoute(builder: (_)=> ControlPage()));
+                    }),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
