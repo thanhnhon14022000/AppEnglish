@@ -2,17 +2,19 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:math';
-
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:appenglish/packages/qoute_model.dart';
 import 'package:appenglish/packages/quote.dart';
 import 'package:appenglish/pages/control_page.dart';
 import 'package:appenglish/value/app_assets.dart';
 import 'package:appenglish/value/app_colors.dart';
 import 'package:appenglish/value/app_styles.dart';
+import 'package:appenglish/value/share_key.dart';
 import 'package:appenglish/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:appenglish/models/englishtoday.dart';
 import 'package:english_words/english_words.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:appenglish/widgets/app_button.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,14 +50,21 @@ class _HomePageState extends State<HomePage> {
     return newList;
   }
 
-  getEnglishToday() {
+  getEnglishToday() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int len = prefs.getInt(ShareKeys.counter) ?? 5;
+    // //////
+    // // ignore: avoid_print
+    // print('Gia tri cua len: $len');
     List<String> newList = [];
-    List<int> rans = fixedListRamdom(len: 5, max: nouns.length);
+    List<int> rans = fixedListRamdom(len: len, max: nouns.length);
     // ignore: avoid_function_literals_in_foreach_calls
     rans.forEach((index) {
       newList.add(nouns[index]);
     });
-    words = newList.map((e) => getQuote(e)).toList();
+    setState(() {
+      words = newList.map((e) => getQuote(e)).toList();
+    });
   }
 
   EnglishToday getQuote(String noun) {
@@ -75,8 +84,9 @@ class _HomePageState extends State<HomePage> {
     _pageController = PageController(
       viewportFraction: 0.9,
     );
-    getEnglishToday();
+
     super.initState();
+    getEnglishToday();
   }
 
   @override
@@ -96,6 +106,8 @@ class _HomePageState extends State<HomePage> {
           //???
           onTap: () {
             _scaffoldKey.currentState?.openDrawer();
+            // ignore: avoid_print
+            //print("Minh ten la Nhon");
           },
           child: Image.asset(AppAssets.menu),
         ),
@@ -210,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 24.0),
-                          child: Text(
+                          child: AutoSizeText(
                             '"$qoute"',
                             style: AppStyles.h4.copyWith(
                               letterSpacing: 1,
@@ -244,7 +256,11 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primaryColor,
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+             getEnglishToday();
+          });
+        },
         child: Image.asset(AppAssets.exchange),
       ),
       drawer: Drawer(
@@ -274,8 +290,8 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       // ignore: avoid_print
                       print('Favori');
-                      Navigator.push(context, 
-                      MaterialPageRoute(builder: (_)=> ControlPage()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => ControlPage()));
                     }),
               )
             ],

@@ -1,8 +1,10 @@
 import 'package:appenglish/value/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../value/app_assets.dart';
 import '../value/app_styles.dart';
+import '../value/share_key.dart';
 
 class ControlPage extends StatefulWidget {
   const ControlPage({Key? key}) : super(key: key);
@@ -13,6 +15,21 @@ class ControlPage extends StatefulWidget {
 
 class _ControlPageState extends State<ControlPage> {
   double sliderValue = 5;
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    initDefaultValue();
+  }
+
+  initDefaultValue() async {
+    prefs = await SharedPreferences.getInstance();
+    int value = prefs.getInt(ShareKeys.counter) ?? 5;
+    setState(() {
+      sliderValue = value.toDouble();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +44,17 @@ class _ControlPageState extends State<ControlPage> {
         ),
         leading: InkWell(
           //???
-          onTap: () {
+          onTap: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setInt(ShareKeys.counter, sliderValue.toInt());
+            // ignore: avoid_print
+            print('Gia tri slider: $sliderValue');
             Navigator.pop(context);
           },
           child: Image.asset(AppAssets.leftArrow),
         ),
       ),
+      // ignore: sized_box_for_whitespace
       body: Container(
         width: double.infinity,
         child: Column(
